@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source="main.c"
+run="${1:-n}"
+source="${2:-main.c}"
 build="gtk_calculator"
 
 echo ""
@@ -17,13 +18,22 @@ if [ $status -eq 0 ]; then
     
     echo ""
     echo "-------------------------"
+
+     if [ "$run" == "y" ]; then
+        chmod u+x "$build"
+        ./"$build"
+        exit 0
+    fi
+
     read -p "Run? (y/n): " answer
     echo "-------------------------"
     echo ""
-
-    if [ "$answer" == "y" ]; then
+    
+    if ["$answer" == "y" ]; then
         chmod u+x "$build"
         ./"$build"
+    else
+        exit 0
     fi
 else
     echo ""
