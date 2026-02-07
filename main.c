@@ -6,7 +6,11 @@
 static void activate(GApplication *, gpointer);
 static void button_setup(GtkWidget *);
 static void create_button(GtkWidget *, char *, int, int, int);
+static void button_clicked(GtkWidget *, gpointer);
+static void calculate();
 
+char currentOperation[100];
+int operationIndex = 0;
 
 int main(int argc, char* argv[]) {
     // Setup GTK
@@ -43,14 +47,11 @@ static void activate(GApplication *app, gpointer user_data) {
 
     button_setup(buttonGrid);
 
-    // Add buttons to window
-    gtk_window_set_child(GTK_WINDOW(win), buttonGrid);
-
     // Show window
+    gtk_window_set_child(GTK_WINDOW(win), buttonGrid);
     gtk_window_present(GTK_WINDOW(win));
 
 } // END activate
-
 
 
 // Set up Calculator buttons
@@ -61,7 +62,7 @@ static void button_setup(GtkWidget *grid) {
         {"7", "8", "9", "Del", "AC"},
         {"4", "5", "6", "x", "/"},
         {"1", "2", "3", "+", "-"},
-        {"0", "" , ".", "=", ""}
+        {"0",  "", ".", "=",  ""}
     };
 
     // Grid of keys
@@ -74,6 +75,7 @@ static void button_setup(GtkWidget *grid) {
 
             button = gtk_button_new_with_label(keys[row][col]);
             gtk_widget_set_size_request(button, BUTTON_SIZE, BUTTON_SIZE);
+            g_signal_connect(button, "clicked", G_CALLBACK(button_clicked), NULL);
 
             // Double grid Keys (0 and =)
             if (row==3 && (col==0 || col==3)) {
@@ -99,3 +101,41 @@ static void button_setup(GtkWidget *grid) {
     }
 } // END button_setup
 
+
+static void button_clicked(GtkWidget *button, gpointer user_data) {
+    const char *label = gtk_button_get_label(GTK_BUTTON(button));
+
+    switch (label[0]) {
+        case '=':
+            calculate();
+            break;
+        case 'D':
+            if (operationIndex>0) {
+                printf("Deleted %c\n", currentOperation[--operationIndex]);
+                currentOperation[operationIndex] = '\0';
+            }
+            else {
+                printf("No operations\n");
+            }
+            break;
+        case 'A':
+            printf("AC!\n");
+            currentOperation[0] = '\0';
+            operationIndex = 0;
+            break;
+        default:
+            printf("Number: %c\n", label[0]);
+            currentOperation[operationIndex++] = label[0];
+            currentOperation[operationIndex] = '\0';
+    }
+}
+
+static void calculate() {
+    printf("Current Operation: %s\n", currentOperation);
+    
+    for (int i=0; i<operationIndex; i++) {
+        currentOperation[i];
+    }
+    currentOperation[0] = '\0';
+    operationIndex = 0;
+}
