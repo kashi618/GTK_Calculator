@@ -1,11 +1,12 @@
-My attempt on making a calcultor using GTK and C, for Linux (arch-based)
+My attempt on making a calcultor using GTK and C, for Linux (archlinux currently)
 
 ## How to Run
 **Dependencies (Archlinux)**
 - gtk4
 - gcc
+- make
 
 **Compiling and Running**
 ```bash
-./run.sh y
+make run
 ```
