@@ -1,6 +1,6 @@
-#include <gtk/gtk.h>
+#include "global.h"
 #include "ui.h"
-#include "calculator.h"
+#include "calculate.h"
 
 /*
 *  Starts calculator window 
@@ -15,7 +15,11 @@ void activate(GApplication *app, gpointer user_data) {
     gtk_window_set_default_size(GTK_WINDOW(win), 600, 800);
     gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
     gtk_window_set_application(GTK_WINDOW(win), GTK_APPLICATION(app));
-
+    
+    // Setup calculator state
+    calc.digitsIdx = 0;
+    calc.operatorsIdx = 0;
+    
     // Calculator Buttons
     GtkWidget *buttonGrid = gtk_grid_new();
     gtk_grid_set_column_spacing(GTK_GRID(buttonGrid), BUTTON_SPACING);
@@ -26,7 +30,6 @@ void activate(GApplication *app, gpointer user_data) {
     // Show window
     gtk_window_set_child(GTK_WINDOW(win), buttonGrid);
     gtk_window_present(GTK_WINDOW(win));
-
 } // END activate
 
 
@@ -85,68 +88,69 @@ void button_setup(GtkWidget *grid) {
 */
 void button_clicked(GtkWidget *button, gpointer user_data) {
     const char *label = gtk_button_get_label(GTK_BUTTON(button));
-    /* 
+        
     switch (label[0]) {
+        // Equals
         case '=':
-            if (has_operator(calc) && is_operator(calc.eqStr[eqStrIdx-1])) {
+            // Activates when equation ends with an operator
+            if (calc.operatorsIdx > calc.digitsIdx) {
                 printf("Cannot end with operator\n");
                 break;
             }
-
-            if (containsOperator == 0) {
+            
+            // Activates when equation has NO operators
+            if (calc.operatorsIdx == 0) {
                 printf("Must contain atleast one operator\n");
                 break;
             }
 
+            printf("Printing\n");
+
             //calculate(calcEq, calcIndex);
             break;
-
+        
+        // Delete item
         case 'D':
-            if (calcIndex>0) {
-                calcIndex--; // Due to string terminator
-                printf("Deleted %c\n", calcEq[calcIndex]);                
-                calcEq[calcIndex] = '\0';
+            // Deletes digit
+            if (calc.digitsIdx >= calc.operatorsIdx) {
+                calc.digits[calc.digitsIdx] = '\0';
+                calc.digitsIdx--;
             }
-            else if (containsOperator == 1) {
-                if (calcIndex == operatorIndex) {
-                    containsOperator = 0;
+            
+            // Deletes operator
+            if (calc.digitsIdx == calc.operatorsIdx) {
+                calc.operatorsIdx--; 
+            }
+            
+            // Activates when trying to delete nothing
+            if (calc.digitsIdx + calc.operatorsIdx == 0) {
+                printf("No operators\n"); 
+            }
+            break;
+        
+        // Clear equation
+        case 'A':
+            //clear_equation();
+            printf("AC!\n");
+            
+            break;
+        
+        // Digits and Operators
+        default:
+            if (is_operator(label[0])) {
+                // Activates if an operator is entered first
+                if (calc.digitsIdx == 0) {
+                    printf("Cannot start with an operator!\n");
+                    break;
+                }
+                // Activates if an operator is repeated
+                if (calc.operatorsIdx > calc.digitsIdx) {
+                    printf("Cannot repeat operators\n");
                 }
             }
-            else {
-                printf("No operations\n");
-            }
-            break;
-
-        case 'A':
-            printf("AC!\n");
-
-            calcEq[0] = '\0';
-            calcIndex = 0;
-            break;
-
-        default:
-            // Checks if starts with operator
-            if (calcIndex==0 && is_operator(label[0])) {
-                printf("Cannot start with an operator!\n");
-                break;
-            }
-
-            // Check if operators are repeated
-            if (is_operator(calcEq[calcIndex-1]) && is_operator(label[0])) {
-                printf("Cannot have multiple operators in a row\n");
-                break;
-            }
-
-            // Updates when equation has an operator
-            if (is_operator(label[0])) containsOperator=1;
-
-
-            // Increment calcIndex, and set it to input
-            calcEq[calcIndex++] = label[0];
-            calcEq[calcIndex] = '\0';
     }
 
-    if (label[0] != '=') printf("Current equation: %s\n", calcEq);
-    */
 }
+
+
 

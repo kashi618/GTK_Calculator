@@ -1,5 +1,5 @@
 # Files
-SRC = src/main.c src/ui.c src/calculator.c
+SRC = src/main.c src/ui.c src/calculate.c src/global.c
 OBJ = $(SRC:.c=.o)
 
 # Target

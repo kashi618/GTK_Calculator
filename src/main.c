@@ -1,8 +1,9 @@
-#include <gtk/gtk.h>
+#include "global.h"
 #include "ui.h"
-#include "calculator.h"
 
-
+/*
+*  Entry point into program
+*/
 int main(int argc, char* argv[]) {
     // Setup GTK
     GtkApplication *app;
