@@ -137,19 +137,32 @@ void button_clicked(GtkWidget *button, gpointer user_data) {
         
         // Digits and Operators
         default:
+            // Operator entered
             if (is_operator(label[0])) {
                 // Activates if an operator is entered first
                 if (calc.digitsIdx == 0) {
-                    printf("Cannot start with an operator!\n");
                     break;
                 }
                 // Activates if an operator is repeated
                 if (calc.operatorsIdx > calc.digitsIdx) {
                     printf("Cannot repeat operators\n");
+                    break;
                 }
+                
+                calc.operators[calc.operatorsIdx] = label[0];
+                calc.operatorsIdx++;
+
+            }
+            // Digit entered 
+            else {
+                calc.digits[calc.digitsIdx] = atoi(&label[0]);
+                calc.digitsIdx++;
             }
     }
-
+    for (int i=0; i<MAX_EQUATION; i++) {
+        printf("Digits %d\n", calc.digits[i]);
+        printf("Operator %c\n", calc.operators[i]);
+    }
 }
 
 
